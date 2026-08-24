@@ -80,17 +80,6 @@ def answer(question, k=10, top_n=3):
     }
 
 
-# --- Anthropic version, for reference (commented out as requested) ---
-# from anthropic import Anthropic
-# anthropic_client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-# msg = anthropic_client.messages.create(
-#     model="claude-sonnet-4-5",
-#     max_tokens=500,
-#     system=SYSTEM_PROMPT,                      # system is its own arg here,
-#     messages=[{"role": "user", "content": ...}],  # not a message role
-# )
-# text = msg.content[0].text
-
 
 if __name__ == "__main__":
     for q in [
