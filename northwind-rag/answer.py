@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from sentence_transformers import SentenceTransformer
 
-from rerank import rerank
+from app.rag.rerank import Reranker
 
 load_dotenv()
 
@@ -16,6 +16,7 @@ load_dotenv()
 MAX_DISTANCE = 0.65
 
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
+reranker = Reranker()
 chroma = chromadb.PersistentClient(path="./chroma_db")
 collection = chroma.get_collection("northwind")
 
@@ -54,7 +55,7 @@ def answer(question, k=10, top_n=3):
             "hits": hits,
         }
 
-    hits = rerank(question, hits, top_n)
+    hits = reranker.rerank(question, hits, top_n)
 
     context = "\n\n".join(
         f"[{i}] (source: {h['source']})\n{h['text']}" for i, h in enumerate(hits, 1)
