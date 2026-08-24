@@ -1,0 +1,7 @@
+ANALYSIS_VERSION = "v1"
+PROMPT_VERSION = "match_analysis_v1"
+CHAT_PROMPT_VERSION = "match_chat_v1"
+HISTORICAL_PROMPT_VERSION = "historical_intelligence_v1"
+FACTS_VERSION = "scorecard_v1"
+CHAT_HISTORY_LIMIT = 8
+CHAT_MESSAGE_MAX_LENGTH = 1000

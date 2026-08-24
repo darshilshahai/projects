@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: cricket-postgres
+    environment:
+      POSTGRES_DB: cricket_db
+      POSTGRES_USER: cricket
+      POSTGRES_PASSWORD: cricket
+    ports:
+      # Host 5433 avoids colliding with a local PostgreSQL on 5432.
+      - "5433:5432"
+    volumes:
+      # PostgreSQL 18+ uses /var/lib/postgresql (not /var/lib/postgresql/data)
+      - postgres_data:/var/lib/postgresql
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cricket -d cricket_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

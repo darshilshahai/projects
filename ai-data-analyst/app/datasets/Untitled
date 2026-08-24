@@ -1,0 +1,121 @@
+from datetime import UTC, datetime
+from pathlib import Path
+from uuid import uuid4
+
+from fastapi import UploadFile
+
+from app.core.config import Settings
+from app.core.exceptions import (
+    EmptyFileError,
+    FileTooLargeError,
+    UnsupportedFileTypeError,
+)
+from app.datasets.profiler import DatasetProfiler
+from app.datasets.repository import DatasetRepository
+from app.schemas.dataset import DatasetMetadata
+
+
+class DatasetService:
+    _ALLOWED_CONTENT_TYPES = {
+        "text/csv",
+        "application/csv",
+        "application/vnd.ms-excel",
+        "text/plain",
+        "application/octet-stream",
+    }
+
+    def __init__(
+        self,
+        *,
+        settings: Settings,
+        repository: DatasetRepository,
+        profiler: DatasetProfiler,
+    ) -> None:
+        self._settings = settings
+        self._repository = repository
+        self._profiler = profiler
+
+    async def upload(self, file: UploadFile) -> DatasetMetadata:
+        filename = (file.filename or "").strip()
+
+        if not filename.lower().endswith(".csv"):
+            raise UnsupportedFileTypeError(filename or "unnamed file")
+
+        if (
+            file.content_type
+            and file.content_type not in self._ALLOWED_CONTENT_TYPES
+        ):
+            raise UnsupportedFileTypeError(filename)
+
+        dataset_id = uuid4().hex
+        dataset_directory = self._repository.create_directory(dataset_id)
+        csv_path = dataset_directory / "dataset.csv"
+
+        try:
+            size_bytes = await self._save_upload(file, csv_path)
+
+            if size_bytes == 0:
+                raise EmptyFileError()
+
+            dataframe = self._profiler.load_csv(csv_path)
+            profile = self._profiler.create_profile(dataframe)
+
+            metadata = DatasetMetadata(
+                dataset_id=dataset_id,
+                original_filename=filename,
+                stored_filename="dataset.csv",
+                content_type=file.content_type,
+                size_bytes=size_bytes,
+                created_at=datetime.now(UTC),
+                profile=profile,
+            )
+
+            self._repository.save_metadata(metadata)
+            return metadata
+
+        except Exception:
+            if dataset_directory.exists():
+                self._repository.delete(dataset_id)
+            raise
+        finally:
+            await file.close()
+
+    def get(self, dataset_id: str) -> DatasetMetadata:
+        return self._repository.get_metadata(dataset_id)
+
+    def list(self) -> list[DatasetMetadata]:
+        return self._repository.list_metadata()
+
+    def delete(self, dataset_id: str) -> None:
+        self._repository.delete(dataset_id)
+
+    def preview(
+        self,
+        dataset_id: str,
+        *,
+        limit: int,
+    ) -> list[dict]:
+        csv_path = self._repository.get_csv_path(dataset_id)
+        dataframe = self._profiler.load_csv(csv_path)
+        return self._profiler.preview(dataframe, limit=limit)
+
+    async def _save_upload(
+        self,
+        file: UploadFile,
+        destination: Path,
+    ) -> int:
+        total_bytes = 0
+        chunk_size = 1024 * 1024
+
+        with destination.open("wb") as output_file:
+            while chunk := await file.read(chunk_size):
+                total_bytes += len(chunk)
+
+                if total_bytes > self._settings.max_upload_size_bytes:
+                    raise FileTooLargeError(
+                        self._settings.max_upload_size_mb
+                    )
+
+                output_file.write(chunk)
+
+        return total_bytes

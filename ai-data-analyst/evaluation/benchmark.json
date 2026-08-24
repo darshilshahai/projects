@@ -1,0 +1,228 @@
+[
+  {
+    "id": "Q01",
+    "question": "What is the total revenue across all orders?",
+    "expected_action": "answer",
+    "expected_values": [
+      {
+        "column": "total_revenue",
+        "value": 1154000
+      }
+    ]
+  },
+  {
+    "id": "Q02",
+    "question": "What is the average revenue per order?",
+    "expected_action": "answer",
+    "expected_values": [
+      {
+        "column": "average_revenue",
+        "value": 115400
+      }
+    ]
+  },
+  {
+    "id": "Q03",
+    "question": "How many units were sold in total?",
+    "expected_action": "answer",
+    "expected_values": [
+      {
+        "column": "total_units",
+        "value": 35
+      }
+    ]
+  },
+  {
+    "id": "Q04",
+    "question": "Which region generated the highest total revenue?",
+    "expected_action": "answer",
+    "expected_values": [
+      {
+        "column": "region",
+        "value": "North"
+      },
+      {
+        "column": "total_revenue",
+        "value": 515000
+      }
+    ]
+  },
+  {
+    "id": "Q05",
+    "question": "Which category generated the most revenue?",
+    "expected_action": "answer",
+    "expected_values": [
+      {
+        "column": "category",
+        "value": "Laptop"
+      },
+      {
+        "column": "total_revenue",
+        "value": 492000
+      }
+    ]
+  },
+  {
+    "id": "Q06",
+    "question": "Which category sold the most units?",
+    "expected_action": "answer",
+    "expected_values": [
+      {
+        "column": "category",
+        "value": "Phone"
+      },
+      {
+        "column": "total_units",
+        "value": 15
+      }
+    ]
+  },
+  {
+    "id": "Q07",
+    "question": "Which region sold the most units?",
+    "expected_action": "answer",
+    "expected_values": [
+      {
+        "column": "region",
+        "value": "North"
+      },
+      {
+        "column": "total_units",
+        "value": 14
+      }
+    ]
+  },
+  {
+    "id": "Q08",
+    "question": "What was the largest single order by revenue?",
+    "expected_action": "answer",
+    "expected_values": [
+      {
+        "column": "order_id",
+        "value": 10
+      },
+      {
+        "column": "revenue",
+        "value": 183000
+      }
+    ]
+  },
+  {
+    "id": "Q09",
+    "question": "How much revenue came from laptops?",
+    "expected_action": "answer",
+    "expected_values": [
+      {
+        "column": "total_revenue",
+        "value": 492000
+      }
+    ]
+  },
+  {
+    "id": "Q10",
+    "question": "How many orders were placed in the North region?",
+    "expected_action": "answer",
+    "expected_values": [
+      {
+        "column": "order_count",
+        "value": 4
+      }
+    ]
+  },
+  {
+    "id": "Q11",
+    "question": "Show total revenue by region as a bar chart.",
+    "expected_action": "chart",
+    "expected_chart_type": "bar",
+    "expected_values": [
+      {
+        "column": "total_revenue",
+        "value": 515000
+      },
+      {
+        "column": "total_revenue",
+        "value": 340000
+      },
+      {
+        "column": "total_revenue",
+        "value": 299000
+      }
+    ]
+  },
+  {
+    "id": "Q12",
+    "question": "Plot revenue by order date as a line chart.",
+    "expected_action": "chart",
+    "expected_chart_type": "line",
+    "expected_values": []
+  },
+  {
+    "id": "Q13",
+    "question": "Show revenue share by category as a pie chart.",
+    "expected_action": "chart",
+    "expected_chart_type": "pie",
+    "expected_values": [
+      {
+        "column": "total_revenue",
+        "value": 492000
+      },
+      {
+        "column": "total_revenue",
+        "value": 412000
+      },
+      {
+        "column": "total_revenue",
+        "value": 250000
+      }
+    ]
+  },
+  {
+    "id": "Q14",
+    "question": "Plot units against revenue as a scatter chart.",
+    "expected_action": "chart",
+    "expected_chart_type": "scatter",
+    "expected_values": []
+  },
+  {
+    "id": "Q15",
+    "question": "Visualize how revenue differs between regions.",
+    "expected_action": "chart",
+    "expected_chart_type": "bar",
+    "expected_values": [
+      {
+        "column": "total_revenue",
+        "value": 515000
+      }
+    ]
+  },
+  {
+    "id": "Q16",
+    "question": "Which region performed best?",
+    "expected_action": "clarification",
+    "expected_values": []
+  },
+  {
+    "id": "Q17",
+    "question": "Show me an interesting chart.",
+    "expected_action": "clarification",
+    "expected_values": []
+  },
+  {
+    "id": "Q18",
+    "question": "Show me the biggest category.",
+    "expected_action": "clarification",
+    "expected_values": []
+  },
+  {
+    "id": "Q19",
+    "question": "Show recent sales.",
+    "expected_action": "clarification",
+    "expected_values": []
+  },
+  {
+    "id": "Q20",
+    "question": "Which product type is doing better?",
+    "expected_action": "clarification",
+    "expected_values": []
+  }
+]

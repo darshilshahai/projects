@@ -1,0 +1,8 @@
+{
+  "name": "ui-verify",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "playwright-core": "^1.62.0"
+  }
+}

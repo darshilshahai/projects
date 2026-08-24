@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+/* Dark theme (default) */
+:root {
+  --background: #0f0f12;
+  --foreground: #e8e8ed;
+  --muted: #8b8b96;
+  --line: #2a2a32;
+  --accent: #7b7bff;
+  --accent-soft: #1e1e3a;
+  --surface: #18181c;
+  --warning-bg: #2a1f1f;
+  --warning-border: #4a3535;
+  --warning-text: #e8a090;
+  --refusal-bg: #2a2618;
+  --refusal-border: #4a4228;
+  --refusal-text: #d4c080;
+  --refusal-badge-bg: #18181c;
+  --bar-track: rgba(255, 255, 255, 0.08);
+  --bar-threshold: rgba(255, 255, 255, 0.25);
+  --distance-good: #0f9d6e;
+  --distance-good-text: #3dd68c;
+  --distance-borderline: #c98a1b;
+  --distance-borderline-text: #e8b040;
+  --distance-bad: #c94a3d;
+  --distance-bad-text: #f07068;
+}
+
+[data-theme="light"] {
+  --background: #fbfbfa;
+  --foreground: #1c1c1f;
+  --muted: #6b6b76;
+  --line: #e5e4e1;
+  --accent: #3a3ad6;
+  --accent-soft: #eeeefc;
+  --surface: #ffffff;
+  --warning-bg: #fdf4f2;
+  --warning-border: #e6cdc9;
+  --warning-text: #8f3a2d;
+  --refusal-bg: #fdfaf1;
+  --refusal-border: #e7dbc0;
+  --refusal-text: #5c4a17;
+  --refusal-badge-bg: #ffffff;
+  --bar-track: rgba(0, 0, 0, 0.07);
+  --bar-threshold: rgba(0, 0, 0, 0.25);
+  --distance-good: #0f9d6e;
+  --distance-good-text: #0b7c57;
+  --distance-borderline: #c98a1b;
+  --distance-borderline-text: #96650d;
+  --distance-bad: #c94a3d;
+  --distance-bad-text: #a63a2f;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-surface: var(--surface);
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-border: var(--warning-border);
+  --color-warning-text: var(--warning-text);
+  --color-refusal-bg: var(--refusal-bg);
+  --color-refusal-border: var(--refusal-border);
+  --color-refusal-text: var(--refusal-text);
+  --color-refusal-badge-bg: var(--refusal-badge-bg);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
