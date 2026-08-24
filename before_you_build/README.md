@@ -21,6 +21,16 @@ This repository is a full-stack MVP:
 
 There is **no database**, **no authentication**, and **no saved history** in the current MVP.
 
+## 📸 Screenshots & Visual Tour
+
+| ![Idea Input Screen](./docs/screenshots/01-idea-input.png) | ![Market Research](./docs/screenshots/02-market-research.png) |
+|---|---|
+| **Founder Idea Prompt & Context Input** | **Live Competitor Web Search & Market Analysis** |
+
+| ![Verdict Decision](./docs/screenshots/03-verdict-decision.png) | ![MVP Recommendation](./docs/screenshots/04-mvp-recommendation.png) |
+|---|---|
+| **BUILD / MODIFY / KILL Verdict Decision** | **Recommended Wedge & Smallest Useful MVP Plan** |
+
 ---
 
 ## Product flow

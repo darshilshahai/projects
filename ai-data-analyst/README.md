@@ -1,6 +1,17 @@
 # QueryMint
 
-An AI-powered CSV analysis application built with FastAPI, OpenAI, DuckDB, pandas and Plotly.
+
+
+## 📸 Screenshots & Visual Tour
+
+| ![Landing Hero](./docs/screenshots/01-landing-hero.png) | ![Workspace Overview](./docs/screenshots/02-workspace-overview.png) |
+|---|---|
+| **Landing Hero & Architecture Overview** | **Interactive Dataset Workspace & Profiling** |
+
+| ![Evaluation Dashboard](./docs/screenshots/03-evaluation-dashboard.png) | ![Case Inspector](./docs/screenshots/04-case-inspector.png) |
+|---|---|
+| **Evaluation Metrics & Benchmarks** | **Detailed Case Inspector & SQL Execution Logs** |
+
 
 ## Current phase
 

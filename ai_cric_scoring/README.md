@@ -1,6 +1,15 @@
 # Cricket Intelligence
 
 AI-powered cricket scoring and match intelligence. This repository is a monorepo with a Flutter client and a FastAPI backend.
+## 📸 Screenshots & Visual Tour
+
+| ![Fixtures Dashboard](./docs/screenshots/01-fixtures-dashboard.png) | ![Ball-by-Ball Scoring](./docs/screenshots/02-ball-by-ball-scoring.png) |
+|---|---|
+| **Match Dashboard & Fixture List** | **Deterministic Scoring Interface & Event Stream** |
+
+| ![Match Intelligence](./docs/screenshots/03-match-intelligence.png) | ![Auditable Event Log](./docs/screenshots/04-audit-log.png) |
+|---|---|
+| **AI Match Analysis & Grounded Insights** | **Auditable Ball Event Timeline** |
 
 ## Architecture summary
 

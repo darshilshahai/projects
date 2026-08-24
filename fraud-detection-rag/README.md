@@ -12,9 +12,20 @@ This project allows you to:
 - generate grounded answers using an LLM,
 - return sources and citations,
 - measure RAG latency,
-- stream answers to clients using Server-Sent Events.
+
+
+## 📸 Screenshots & Visual Tour
+
+| ![Investigation Dashboard](./docs/screenshots/01-investigation-dashboard.png) | ![Grounded Citations](./docs/screenshots/02-grounded-citation.png) |
+|---|---|
+| **Healthcare Fraud Query & Investigation Interface** | **Grounded Answer & Citation Distance Metrics** |
+
+| ![Document Ingestion](./docs/screenshots/03-document-ingestion.png) | ![Latency & Metrics](./docs/screenshots/04-latency-metrics.png) |
+|---|---|
+| **Document Upload & Vector Storage Ingestion** | **RAG Latency Breakdown & Execution Metrics** |
 
 ---
+
 
 # Table of Contents
 

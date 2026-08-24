@@ -1,6 +1,15 @@
 # Darshil Shah — AI Engineer Portfolio
 
 An editorial, brutalist-leaning dark portfolio for an AI Engineer: near-black `#0a0a0a` with a single acid-lime accent `#c8ff32`, oversized Helvetica display type with Georgia-italic accent words, Geist Mono micro-labels, a film-grain overlay, an inverted paper-toned Projects section, and an all-acid Contact section. Built with Next.js 15 (App Router), TypeScript, Tailwind CSS v4 (preflight) + a hand-written design system in `globals.css`, and Framer Motion. All content is data-driven from `src/data/`.
+## 📸 Screenshots & Visual Tour
+
+| ![Hero Section](./docs/screenshots/01-hero-section.png) | ![Projects & Case Studies](./docs/screenshots/02-projects-case-studies.png) |
+|---|---|
+| **Acid-lime brutalist hero with status & IST clock** | **Inverted paper-toned projects showcase** |
+
+| ![System Pipeline Map](./docs/screenshots/03-system-pipeline-map.png) | ![Contact & Skills](./docs/screenshots/04-contact-skills.png) |
+|---|---|
+| **Interactive live system map & architecture sequence** | **Skills marquee & acid contact section** |
 
 ## Stack
 
