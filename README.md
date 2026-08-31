@@ -1,6 +1,6 @@
 # 🚀 AI & Full-Stack Engineering Projects — Master Portfolio
 
-Welcome to the **AI & Full-Stack Engineering Projects** repository! This monorepo features **7 production-grade AI applications, RAG systems, data analysis platforms, and full-stack web/mobile applications**.
+Welcome to the **AI & Full-Stack Engineering Projects** repository! This monorepo features **8 production-grade AI applications, RAG systems, data analysis platforms, and full-stack web/mobile applications**.
 
 Each project is self-contained with its own architecture, backend API, frontend interface, and dedicated git branch.
 
@@ -16,6 +16,7 @@ Each project is self-contained with its own architecture, backend API, frontend 
    - [5. Healthcare Fraud RAG API (`fraud-detection-rag`)](#5-healthcare-fraud-rag-api)
    - [6. Habit Tracker (`habit-tracker`)](#6-habit-tracker)
    - [7. Northwind RAG — Smart Document Assistant (`northwind-rag`)](#7-northwind-rag--smart-document-assistant)
+   - [8. YouTube Playlist Manager (`my-yt-playlist`)](#8-youtube-playlist-manager)
 2. [🌿 Git Branching Strategy](#-git-branching-strategy)
 3. [⚡ Quick Start Guide](#-quick-start-guide)
 
@@ -107,6 +108,14 @@ Enterprise document Q&A assistant featuring a two-gate answerability refusal arc
 
 ---
 
+### 8. YouTube Playlist Manager
+> **Path:** [`my-yt-playlist/`](./my-yt-playlist) | **Branch:** `my-yt`  
+> **Tech Stack:** FastAPI 0.115+, PostgreSQL 16, AsyncPG, SQLAlchemy 2.0, React 19, Vite 8, Tailwind CSS v4, Argon2id, JWT (RTR)
+
+A modern full-stack web application for saving, organizing, searching, and managing YouTube video playlists. Features automated video metadata ingestion via YouTube oEmbed API, side-by-side cinema split player with timestamped notes, smart duration filtering (Quick Queue), custom collections, tag cloud, and production security with Argon2id hashing and JWT Refresh Token Rotation (RTR).
+
+---
+
 ## 🌿 Git Branching Strategy
 
 This repository isolates development into dedicated per-project branches:
@@ -121,6 +130,7 @@ This repository isolates development into dedicated per-project branches:
 | **`fraud-detection-rag`** | Healthcare Fraud RAG engine development |
 | **`habit-tracker`** | Habit Tracker web app & Supabase backend development |
 | **`northwind-rag`** | Northwind Document Assistant RAG pipeline development |
+| **`my-yt`** | YouTube Playlist Manager web app & FastAPI backend development |
 
 To switch to a specific project branch:
 ```bash
@@ -139,6 +149,16 @@ cd projects
 
 ### 2. Run a Specific Project
 Navigate to any project directory to install dependencies and run local dev servers:
+
+```bash
+# Example: Running YouTube Playlist Manager (my-yt-playlist)
+cd my-yt-playlist/backend
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+alembic upgrade head
+uvicorn app.main:app --reload --port 8000 &
+cd ../frontend && npm install && npm run dev
+```
 
 ```bash
 # Example: Running QueryMint (AI Data Analyst)
