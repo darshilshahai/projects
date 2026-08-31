@@ -86,7 +86,7 @@ class YouTubeVideoMetadata:
 class YouTubeClient:
     """
     Client for interacting with YouTube Data API v3 and fallback oEmbed endpoints.
-    Provides automatic fallback to oEmbed if YouTube API key is missing or quota is exceeded.
+    Provides automatic fallback to oEmbed + watch page HTML parsing for duration extraction.
     """
 
     def __init__(self, api_key: Optional[str] = None):
@@ -95,7 +95,7 @@ class YouTubeClient:
     async def fetch_video_metadata(self, video_id: str) -> YouTubeVideoMetadata:
         """
         Fetches metadata for a YouTube video ID.
-        Uses official Data API v3 if API key exists; otherwise falls back to oEmbed metadata.
+        Uses official Data API v3 if API key exists; otherwise falls back to oEmbed + HTML duration parsing.
         """
         if self.api_key:
             try:
@@ -107,6 +107,34 @@ class YouTubeClient:
                 pass
 
         return await self._fetch_via_oembed(video_id)
+
+    async def _fetch_duration_from_watch_page(self, client: httpx.AsyncClient, canonical_url: str) -> int:
+        """Fallback helper to extract exact video duration in seconds from YouTube watch page HTML."""
+        try:
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+            resp = await client.get(canonical_url, headers=headers, follow_redirects=True)
+            if resp.status_code == 200:
+                html = resp.text
+
+                # Match 1: "lengthSeconds":"359"
+                length_match = re.search(r"\"lengthSeconds\":\"(\d+)\"", html)
+                if length_match:
+                    return int(length_match.group(1))
+
+                # Match 2: "approxDurationMs":"359440"
+                approx_match = re.search(r"\"approxDurationMs\":\"(\d+)\"", html)
+                if approx_match:
+                    return int(approx_match.group(1)) // 1000
+
+                # Match 3: itemprop="duration" content="PT6M0S"
+                itemprop_match = re.search(r"itemprop=\"duration\"\s+content=\"([^\"]+)\"", html)
+                if itemprop_match:
+                    return parse_iso8601_duration(itemprop_match.group(1))
+        except Exception:
+            pass
+        return 0
 
     async def _fetch_via_data_api(self, video_id: str) -> YouTubeVideoMetadata:
         """Fetch metadata using official YouTube Data API v3 endpoint."""
@@ -176,7 +204,7 @@ class YouTubeClient:
             )
 
     async def _fetch_via_oembed(self, video_id: str) -> YouTubeVideoMetadata:
-        """Fallback metadata fetcher using YouTube oEmbed endpoint."""
+        """Fallback metadata fetcher using YouTube oEmbed endpoint with HTML duration parsing."""
         canonical_url = YouTubeURLParser.build_canonical_url(video_id)
         oembed_url = "https://www.youtube.com/oembed"
         params = {"url": canonical_url, "format": "json"}
@@ -195,6 +223,7 @@ class YouTubeClient:
                 )
 
             data = response.json()
+            duration_sec = await self._fetch_duration_from_watch_page(client, canonical_url)
 
             return YouTubeVideoMetadata(
                 youtube_video_id=video_id,
@@ -204,7 +233,7 @@ class YouTubeClient:
                 channel_name=data.get("author_name", "Unknown Channel"),
                 channel_id=data.get("author_url", "").split("/")[-1] or "channel_id",
                 thumbnail_url=data.get("thumbnail_url"),
-                duration_seconds=0,  # oEmbed doesn't provide video duration
+                duration_seconds=duration_sec,
                 published_at=datetime.now(timezone.utc),
                 category_id=None,
                 is_unavailable=False,
