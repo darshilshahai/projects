@@ -114,6 +114,10 @@ Enterprise document Q&A assistant featuring a two-gate answerability refusal arc
 
 A modern full-stack web application for saving, organizing, searching, and managing YouTube video playlists. Features automated video metadata ingestion via YouTube oEmbed API, side-by-side cinema split player with timestamped notes, smart duration filtering (Quick Queue), custom collections, tag cloud, and production security with Argon2id hashing and JWT Refresh Token Rotation (RTR).
 
+| ![Dashboard Overview](./my-yt-playlist/docs/screenshots/01-dashboard-overview.png) | ![Side-by-Side Cinema Notes](./my-yt-playlist/docs/screenshots/02-video-cinema-notes.png) |
+|---|---|
+| **Video Library Dashboard & Quick Queue** | **Side-by-Side Cinema Player & Note Taking** |
+
 ---
 
 ## 🌿 Git Branching Strategy
