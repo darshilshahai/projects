@@ -27,3 +27,13 @@ export function formatDate(isoString) {
     day: 'numeric',
   });
 }
+
+/**
+ * Extracts 11-character YouTube Video ID from any URL or raw ID string
+ */
+export function extractYouTubeId(urlOrId) {
+  if (!urlOrId) return '';
+  if (/^[a-zA-Z0-9_-]{11}$/.test(urlOrId)) return urlOrId;
+  const match = urlOrId.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
+  return match ? match[1] : '';
+}

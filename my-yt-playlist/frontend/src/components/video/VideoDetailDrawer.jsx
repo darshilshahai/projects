@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createNoteApi, deleteNoteApi, deleteVideoApi, updateVideoApi } from '../../api/videos.api';
 import { formatDuration, formatDate } from '../../utils/formatters';
 import ConfirmDialog from '../ui/ConfirmDialog';
+import VideoPlayerModal from './VideoPlayerModal';
 import {
   X,
   Star,
@@ -14,24 +15,23 @@ import {
   StickyNote,
   Loader2,
   Calendar,
-  Tag,
+  Play,
 } from 'lucide-react';
 
 export default function VideoDetailDrawer({ userVideo, isOpen, onClose }) {
-  if (!isOpen || !userVideo) return null;
-
-  const { video, status, is_favourite, is_watch_later, notes, added_at, timestamp_notes = [] } = userVideo;
-
-  const queryClient = useQueryClient();
+  const [isPlayerOpen, setIsPlayerOpen] = useState(false);
+  const [playerTimestamp, setPlayerTimestamp] = useState(0);
 
   // Note form state
   const [noteText, setNoteText] = useState('');
   const [timestampSeconds, setTimestampSeconds] = useState(0);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
+  const queryClient = useQueryClient();
+
   // Mutation to Add Timestamp Note
   const addNoteMutation = useMutation({
-    mutationFn: (data) => createNoteApi(userVideo.id, data),
+    mutationFn: (data) => createNoteApi(userVideo?.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['videos'] });
       setNoteText('');
@@ -41,7 +41,7 @@ export default function VideoDetailDrawer({ userVideo, isOpen, onClose }) {
 
   // Mutation to Delete Note
   const deleteNoteMutation = useMutation({
-    mutationFn: (noteId) => deleteNoteApi(userVideo.id, noteId),
+    mutationFn: (noteId) => deleteNoteApi(userVideo?.id, noteId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['videos'] });
     },
@@ -49,7 +49,7 @@ export default function VideoDetailDrawer({ userVideo, isOpen, onClose }) {
 
   // Mutation to Delete Video
   const deleteVideoMutation = useMutation({
-    mutationFn: () => deleteVideoApi(userVideo.id),
+    mutationFn: () => deleteVideoApi(userVideo?.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['videos'] });
       queryClient.invalidateQueries({ queryKey: ['quickQueue'] });
@@ -60,12 +60,16 @@ export default function VideoDetailDrawer({ userVideo, isOpen, onClose }) {
 
   // Mutation to Update Video State
   const updateMutation = useMutation({
-    mutationFn: (data) => updateVideoApi(userVideo.id, data),
+    mutationFn: (data) => updateVideoApi(userVideo?.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['videos'] });
       queryClient.invalidateQueries({ queryKey: ['quickQueue'] });
     },
   });
+
+  if (!isOpen || !userVideo) return null;
+
+  const { video, status, is_favourite, is_watch_later, added_at, timestamp_notes = [] } = userVideo;
 
   const handleAddNote = (e) => {
     e.preventDefault();
@@ -75,6 +79,11 @@ export default function VideoDetailDrawer({ userVideo, isOpen, onClose }) {
       timestamp_seconds: Number(timestampSeconds) || 0,
       note_text: noteText.trim(),
     });
+  };
+
+  const handlePlayFromTimestamp = (seconds) => {
+    setPlayerTimestamp(seconds);
+    setIsPlayerOpen(true);
   };
 
   const isWatched = status === 'watched';
@@ -103,28 +112,27 @@ export default function VideoDetailDrawer({ userVideo, isOpen, onClose }) {
             </button>
           </div>
 
-          {/* Large Video Preview Thumbnail */}
-          <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-900 shadow-md">
+          {/* Large Video Preview Thumbnail with Stream CTA */}
+          <div
+            onClick={() => handlePlayFromTimestamp(0)}
+            className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-900 shadow-md group cursor-pointer"
+          >
             <img
               src={video.thumbnail_url}
               alt={video.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
             <div className="absolute bottom-3 right-3 px-2 py-1 bg-slate-950/90 text-slate-100 text-xs font-mono rounded-lg">
               {formatDuration(video.duration_seconds)}
             </div>
 
-            <a
-              href={video.youtube_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="absolute inset-0 bg-slate-950/40 hover:bg-slate-950/20 transition-all flex items-center justify-center group"
-            >
-              <div className="flex items-center gap-2 py-2.5 px-4 bg-[hsl(var(--primary))] text-slate-950 font-bold text-xs rounded-xl shadow-lg group-hover:scale-105 transition-transform">
-                <ExternalLink className="w-4 h-4" />
-                <span>Watch on YouTube</span>
+            {/* Play Overlay Button */}
+            <div className="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/20 transition-all flex items-center justify-center">
+              <div className="flex items-center gap-2.5 py-3 px-5 bg-[hsl(var(--primary))] text-slate-950 font-bold text-xs rounded-xl shadow-2xl group-hover:scale-105 transition-transform">
+                <Play className="w-4 h-4 fill-slate-950" />
+                <span>Stream Video in App</span>
               </div>
-            </a>
+            </div>
           </div>
 
           {/* Title & Metadata Details */}
@@ -148,42 +156,56 @@ export default function VideoDetailDrawer({ userVideo, isOpen, onClose }) {
           </div>
 
           {/* Action Quick Toggle Buttons */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 pb-4 border-b border-[hsl(var(--border-muted))/0.5]">
-            <button
-              onClick={() => updateMutation.mutate({ is_favourite: !is_favourite })}
-              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl transition-all ${
-                is_favourite
-                  ? 'bg-[hsl(var(--favourite))] text-slate-950'
-                  : 'bg-[hsl(var(--bg-input))] text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))] border border-[hsl(var(--border-muted))/0.5]'
-              }`}
-            >
-              <Star className={`w-4 h-4 ${is_favourite ? 'fill-slate-950' : ''}`} />
-              <span>{is_favourite ? 'Favourite' : 'Add Favourite'}</span>
-            </button>
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 pb-4 border-b border-[hsl(var(--border-muted))/0.5]">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => updateMutation.mutate({ is_favourite: !is_favourite })}
+                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl transition-all ${
+                  is_favourite
+                    ? 'bg-[hsl(var(--favourite))] text-slate-950'
+                    : 'bg-[hsl(var(--bg-input))] text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))] border border-[hsl(var(--border-muted))/0.5]'
+                }`}
+              >
+                <Star className={`w-4 h-4 ${is_favourite ? 'fill-slate-950' : ''}`} />
+                <span>{is_favourite ? 'Favourite' : 'Add Favourite'}</span>
+              </button>
 
-            <button
-              onClick={() => updateMutation.mutate({ is_watch_later: !is_watch_later })}
-              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl transition-all ${
-                is_watch_later
-                  ? 'bg-[hsl(var(--watch-later))] text-white'
-                  : 'bg-[hsl(var(--bg-input))] text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))] border border-[hsl(var(--border-muted))/0.5]'
-              }`}
-            >
-              <Clock className="w-4 h-4" />
-              <span>{is_watch_later ? 'Watch Later' : 'Add Watch Later'}</span>
-            </button>
+              <button
+                onClick={() => updateMutation.mutate({ is_watch_later: !is_watch_later })}
+                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl transition-all ${
+                  is_watch_later
+                    ? 'bg-[hsl(var(--watch-later))] text-white'
+                    : 'bg-[hsl(var(--bg-input))] text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))] border border-[hsl(var(--border-muted))/0.5]'
+                }`}
+              >
+                <Clock className="w-4 h-4" />
+                <span>{is_watch_later ? 'Watch Later' : 'Add Watch Later'}</span>
+              </button>
 
-            <button
-              onClick={() => updateMutation.mutate({ status: isWatched ? 'unwatched' : 'watched' })}
-              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl transition-all ${
-                isWatched
-                  ? 'bg-[hsl(var(--watched))] text-slate-950'
-                  : 'bg-[hsl(var(--bg-input))] text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))] border border-[hsl(var(--border-muted))/0.5]'
-              }`}
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>{isWatched ? 'Watched' : 'Mark Watched'}</span>
-            </button>
+              <button
+                onClick={() => updateMutation.mutate({ status: isWatched ? 'unwatched' : 'watched' })}
+                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl transition-all ${
+                  isWatched
+                    ? 'bg-[hsl(var(--watched))] text-slate-950'
+                    : 'bg-[hsl(var(--bg-input))] text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))] border border-[hsl(var(--border-muted))/0.5]'
+                }`}
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>{isWatched ? 'Watched' : 'Mark Watched'}</span>
+              </button>
+            </div>
+
+            {video.youtube_url && (
+              <a
+                href={video.youtube_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs text-[hsl(var(--text-muted))] hover:text-[hsl(var(--primary))] transition-colors"
+              >
+                <span>YouTube</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            )}
           </div>
 
           {/* Description Snippet */}
@@ -267,13 +289,19 @@ export default function VideoDetailDrawer({ userVideo, isOpen, onClose }) {
                 {timestamp_notes.map((n) => (
                   <div
                     key={n.id}
-                    className="flex items-center justify-between gap-3 p-3 bg-[hsl(var(--bg-input))] border border-[hsl(var(--border-muted))/0.5] rounded-xl text-xs"
+                    className="flex items-center justify-between gap-3 p-3 bg-[hsl(var(--bg-input))] border border-[hsl(var(--border-muted))/0.5] hover:border-[hsl(var(--primary))/0.5] rounded-xl text-xs transition-colors"
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <span className="px-2 py-0.5 bg-[hsl(var(--primary))/0.15] text-[hsl(var(--primary))] font-mono font-bold rounded shrink-0">
+                    <div
+                      onClick={() => handlePlayFromTimestamp(n.timestamp_seconds)}
+                      className="flex items-center gap-3 min-w-0 cursor-pointer flex-1 group"
+                      title="Play from timestamp"
+                    >
+                      <span className="px-2 py-0.5 bg-[hsl(var(--primary))/0.15] text-[hsl(var(--primary))] font-mono font-bold rounded shrink-0 group-hover:bg-[hsl(var(--primary))] group-hover:text-slate-950 transition-colors">
                         {formatDuration(n.timestamp_seconds)}
                       </span>
-                      <p className="text-[hsl(var(--text-primary))] truncate">{n.note_text}</p>
+                      <p className="text-[hsl(var(--text-primary))] truncate group-hover:text-[hsl(var(--primary))] transition-colors">
+                        {n.note_text}
+                      </p>
                     </div>
 
                     <button
@@ -301,6 +329,17 @@ export default function VideoDetailDrawer({ userVideo, isOpen, onClose }) {
           </div>
         </div>
       </div>
+
+      {/* Video Player Modal */}
+      <VideoPlayerModal
+        userVideo={userVideo}
+        isOpen={isPlayerOpen}
+        onClose={() => setIsPlayerOpen(false)}
+        initialTimestampSeconds={playerTimestamp}
+        onToggleFavourite={(uv) => updateMutation.mutate({ is_favourite: !uv.is_favourite })}
+        onToggleWatchLater={(uv) => updateMutation.mutate({ is_watch_later: !uv.is_watch_later })}
+        onToggleWatched={(uv) => updateMutation.mutate({ status: uv.status === 'watched' ? 'unwatched' : 'watched' })}
+      />
 
       {/* Delete Video Confirmation Modal */}
       <ConfirmDialog

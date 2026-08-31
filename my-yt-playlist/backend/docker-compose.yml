@@ -25,6 +25,7 @@ services:
       dockerfile: Dockerfile
     container_name: yt_playlist_backend
     restart: always
+    command: /app/start.sh
     ports:
       - "8000:8000"
     environment:

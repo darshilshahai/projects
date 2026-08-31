@@ -34,13 +34,15 @@ RUN groupadd -g 10001 appgroup && \
 # Copy installed Python site-packages from builder
 COPY --from=builder /install /usr/local
 
-# Copy application source code and migration assets
+# Copy application source code, migration assets, and startup script
 COPY app /app/app
 COPY alembic /app/alembic
 COPY alembic.ini /app/alembic.ini
+COPY start.sh /app/start.sh
 
-# Set non-root permissions
-RUN chown -R appuser:appgroup /app
+# Set executable permission and non-root ownership
+RUN chmod +x /app/start.sh && \
+    chown -R appuser:appgroup /app
 
 # Environment defaults
 ENV PYTHONUNBUFFERED=1 \
@@ -56,5 +58,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8000/api/v1/health || exit 1
 
-# Production server command
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Production server command with automatic migration execution
+CMD ["/app/start.sh"]
