@@ -1,6 +1,6 @@
 # AI & Full-Stack Engineering Projects — Master Overview & Resume Guide
 
-This document provides a comprehensive technical overview of all 7 repositories in the `ai-engineering-projects` workspace, detailing their architecture, technology stack, data pipelines, key features, engineering decisions, and resume-ready summaries.
+This document provides a comprehensive technical overview of all 8 repositories in the `ai-engineering-projects` workspace, detailing their architecture, technology stack, data pipelines, key features, engineering decisions, and resume-ready summaries.
 
 ---
 
@@ -13,7 +13,8 @@ This document provides a comprehensive technical overview of all 7 repositories 
 5. [Healthcare Fraud RAG API (`fraud-detection-rag`)](#5-healthcare-fraud-rag-api-fraud-detection-rag)
 6. [Habit Tracker (`habit-tracker`)](#6-habit-tracker-habit-tracker)
 7. [Northwind RAG — Smart Document Assistant (`northwind-rag`)](#7-northwind-rag--smart-document-assistant-northwind-rag)
-8. [🎯 Resume Summaries & Impact Bullets](#-resume-summaries--impact-bullets)
+8. [YouTube Playlist Manager (`my-yt-playlist`)](#8-youtube-playlist-manager-my-yt-playlist)
+9. [🎯 Resume Summaries & Impact Bullets](#-resume-summaries--impact-bullets)
 
 ---
 
@@ -218,6 +219,37 @@ Gate 2: System Prompt Grounding Rule ("Answer ONLY from context") ──[UNGROUN
 
 ---
 
+## 8. YouTube Playlist Manager (`my-yt-playlist`)
+
+### Overview & Purpose
+**YouTube Playlist Manager** is a modern full-stack web application designed for saving, organizing, searching, and managing YouTube video playlists. It bridges video collection with productivity tools like side-by-side timestamped video note taking, duration-based quick queues, custom collections, and normalized hashtag clouds.
+
+### Tech Stack
+- **Backend Framework:** FastAPI 0.115+ (Python 3.12), Pydantic v2, Uvicorn
+- **Database & ORM:** PostgreSQL 16, AsyncPG, SQLAlchemy 2.0 (Async ORM), Alembic async migrations
+- **Authentication & Security:** Argon2id password hashing (`pwdlib`), PyJWT short-lived access tokens (15 mins) & refresh tokens (7 days) with Refresh Token Rotation (RTR)
+- **Frontend Framework:** React 19, Vite 8, Tailwind CSS v4 (`@tailwindcss/vite`), TanStack Query v5, Axios API client, React Router v6
+- **UI & Ergonomics:** Lucide React, side-by-side cinema split player with timestamp note toolbox, touch-first 44px tap targets, CSS safe area inset padding, WAI-ARIA modal roles
+- **Testing & Containerization:** Pytest (24/24 passing unit & integration tests), Docker multi-stage build, Docker Compose
+
+### Architecture & Workflows
+```text
+YouTube URL → FastAPI → oEmbed Metadata Extraction (Title, Thumbnail, Duration, Channel)
+     ↓
+PostgreSQL 16 (Decoupled Global `videos` & User-Specific `user_videos` Schema)
+     ↓
+React 19 + Vite 8 Frontend → Side-by-Side Cinema Player + Timestamped Notes + Smart Quick Queue
+```
+
+### Key Technical Features
+1. **Decoupled Architecture & Schema:** Separates global YouTube video metadata (`videos`) from individual user library state (`user_videos`), allowing efficient multi-tenant deduplication and single metadata fetching.
+2. **Automated oEmbed Ingestion Engine:** Parses YouTube URLs (standard watch, `youtu.be`, `/shorts/`, embeds) to automatically pull 16:9 thumbnail assets, video titles, channel names, and durations.
+3. **Side-by-Side Cinema Split Player & Timestamped Notes:** Feature-rich embedded video player coupled with a multiline notes editor supporting text formatting (bold, italic, code blocks, bullet lists) and `[MM:SS]` timestamp badges for deep learning.
+4. **Smart Quick Queue ("What to watch in X minutes?"):** Server-side duration query filtering unwatched saved videos based on available free time (5, 15, 30 minutes).
+5. **Production Security Architecture:** Enforces Argon2id password hashing, HTTP-only JWT Refresh Token Rotation (RTR), OWASP security headers, and strict IDOR route protections across all video/collection/tag resources.
+
+---
+
 ## 🎯 Resume Summaries & Impact Bullets
 
 Use these resume-ready descriptions and impact-driven bullet points for your resume, portfolio, or LinkedIn profile.
@@ -319,3 +351,17 @@ Use these resume-ready descriptions and impact-driven bullet points for your res
 - **Built** a 14-question automated evaluation harness measuring retrieval precision, gate refusal rates, and semantic wording sensitivity.
 
 **Core Tech Stack:** FastAPI, Python, ChromaDB, Reranking (Cross-Encoder), RAG, OpenAI API, Next.js, TypeScript, Evaluation Harness.
+
+---
+
+### Project 8: YouTube Playlist Manager (`my-yt-playlist`)
+**Target Roles:** Full-Stack Python/React Engineer, Backend API Developer  
+**One-Line Summary:** A full-stack YouTube video management web app featuring automated oEmbed metadata ingestion, side-by-side timestamped note taking, and Argon2id + JWT authentication.
+
+#### Resume Bullets:
+- **Architected** a multi-tenant full-stack video library application using FastAPI, PostgreSQL 16 (AsyncPG/SQLAlchemy 2.0), React 19, Vite 8, and Tailwind CSS v4.
+- **Engineered** a decoupled database schema separating global YouTube video metadata from user-specific library states, reducing duplicate oEmbed API requests and optimizing storage.
+- **Built** an interactive side-by-side cinema split video player with timestamped note taking (`[MM:SS]` badges, markdown formatting) and smart duration filtering ("Quick Queue").
+- **Implemented** secure authentication utilizing Argon2id password hashing, short-lived JWT Access Tokens, and long-lived Refresh Tokens with Refresh Token Rotation (RTR).
+
+**Core Tech Stack:** FastAPI, Python, PostgreSQL, AsyncPG, SQLAlchemy 2.0, React 19, Vite 8, Tailwind CSS v4, TanStack Query, Argon2id, JWT Auth, Docker.
